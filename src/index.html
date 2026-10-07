@@ -159,7 +159,7 @@
 <script type="module">
 import {
   esc, isAdult, hubConfirm, hubToday, searchMatch,
-  createDbHelper, createEventsHelper,
+  createDbHelper, createEventsHelper, glyph,
 } from "/hub-sdk.js";
 import {
   OPS, RUN_LENGTHS, DEFAULT_RUN_LENGTH, MODES, MAX_CARDS,
@@ -357,7 +357,7 @@ function showCard() {
   document.getElementById("feedback").className = "feedback";
   document.getElementById("feedback").textContent = "";
   if (run.mode === "spelling") {
-    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Hear the word">🔊</button>`;
+    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Hear the word">${glyph("speaker")}</button>`;
     hintEl.textContent = card.q ? `Hint: ${card.q}` : "";
     if (canSpeak) speak(shownAnswer(card.a)); else peek(false);
   } else {
@@ -381,7 +381,7 @@ function peek(counts) {
   promptEl.textContent = shownAnswer(card.a);
   peekTimer = setTimeout(() => {
     if (!run || run.revealed) return;
-    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Show the word again">${canSpeak ? "🔊" : "👀"}</button>`;
+    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Show the word again">${glyph(canSpeak ? "speaker" : "eye")}</button>`;
   }, 1500);
   document.getElementById("answer")?.focus();
 }
@@ -600,7 +600,7 @@ function renderDeckList() {
     const set = deckSet(deck);
     const total = set.cards.length;
     return `<div class="row">
-      <div class="row-icon">${deck.mode === "spelling" ? "🔤" : "🃏"}</div>
+      <div class="row-icon">${glyph(deck.mode === "spelling" ? "book" : "flash-cards")}</div>
       <div class="row-body">
         <div class="row-title">${esc(deck.title)}</div>
         <div class="tiny muted">${total} ${total === 1 ? "card" : "cards"} · ${esc(MODES[set.mode])}${deck.visibility === "mine" ? " · private" : ""}</div>
@@ -676,7 +676,7 @@ function renderRun() {
         autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Your answer" />
       <div class="feedback" id="feedback" aria-live="assertive"></div>
       <div class="run-actions">
-        ${run.mode === "spelling" ? `<button type="button" class="btn btn-ghost btn-sm" data-action="peek">👀 Peek</button>` : ""}
+        ${run.mode === "spelling" ? `<button type="button" class="btn btn-ghost btn-sm" data-action="peek">${glyph("eye")} Peek</button>` : ""}
         <button type="submit" class="btn">Check</button>
       </div>
     </form>
@@ -689,7 +689,7 @@ function renderDone() {
   const right = row.card_count - row.missed_count;
   let verdict;
   if (comparison.firstTime) verdict = `<div class="done-verdict best">Your first time for this set. That's the one to beat.</div>`;
-  else if (comparison.isBest) verdict = `<div class="done-verdict best">New best! 🎉 ${formatTime(-comparison.deltaMs)} faster</div>`;
+  else if (comparison.isBest) verdict = `<div class="done-verdict best">New best! ${glyph("sparkles")} ${formatTime(-comparison.deltaMs)} faster</div>`;
   else verdict = `<div class="done-verdict">Your best is ${formatTime(before.best_ms)} — ${formatTime(comparison.deltaMs)} to find</div>`;
   return `
     <div class="card done">
@@ -717,7 +717,7 @@ function render() {
     : screen === "family" && canSeeFamily(who) ? renderFamily()
     : renderHome();
   root.innerHTML = `
-    ${screen === "run" ? "" : `<div class="topbar"><h1>⚡ Practice Decks</h1></div>${renderDemoBar()}`}
+    ${screen === "run" ? "" : `<div class="topbar"><h1>${glyph("flash-cards")} Practice Decks</h1></div>${renderDemoBar()}`}
     ${error ? `<div class="error" role="alert">${esc(error)}</div>` : ""}
     ${body}
   `;
