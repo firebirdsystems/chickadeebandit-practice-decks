@@ -1,0 +1,84 @@
+{
+  "$schema": "https://chickadeebandit.com/manifest-schema.json",
+  "id": "practice-decks",
+  "name": "Practice Decks",
+  "version": "1.0.0",
+  "description": "Timed flash card runs. Times tables and other maths facts are built in, and anyone can add a deck: this week's spelling words, capitals, vocabulary. Beat your best time for each set.",
+  "entrypoint": "index.html",
+  "runtime": "static",
+  "category": "kids",
+  "tags": ["flash cards", "math", "spelling", "kids", "education"],
+  "data_access": {
+    "reads": ["family.members"],
+    "writes": []
+  },
+  "permissions": {
+    "default_audience": "everyone",
+    "requires_approval": false
+  },
+  "storage": "db",
+  "db_plaintext_columns": ["deck_key", "card_count"],
+  "preload": {
+    "decks": {
+      "sql": "SELECT * FROM app_practice_decks__decks ORDER BY created_at DESC, id DESC LIMIT 100"
+    },
+    "bests": {
+      "sql": "SELECT * FROM app_practice_decks__bests WHERE member_id = ? ORDER BY last_date DESC, deck_key LIMIT 300",
+      "params": [":me"]
+    },
+    "runs": {
+      "sql": "SELECT * FROM app_practice_decks__runs WHERE member_id = ? ORDER BY created_at DESC LIMIT 50",
+      "params": [":me"]
+    }
+  },
+  "member_references": {
+    "decks": { "column": "created_by", "on_removed": "keep" },
+    "runs": { "column": "member_id", "on_removed": "delete" },
+    "bests": { "column": "member_id", "on_removed": "delete" }
+  },
+  "row_policies": {
+    "decks": {
+      "kind": "owner_or_visibility",
+      "member_column": "created_by",
+      "visibility_column": "visibility",
+      "everyone_values": ["everyone"],
+      "adult_values": ["everyone", "mine"],
+      "max_rows": 300
+    },
+    "runs": {
+      "kind": "owner_only",
+      "member_column": "member_id",
+      "adults_bypass": true,
+      "member_can_update": false,
+      "retain_days": { "default": 400, "timestamp_column": "created_at" }
+    },
+    "bests": {
+      "kind": "owner_only",
+      "member_column": "member_id",
+      "adults_bypass": true
+    }
+  },
+  "glance": {
+    "source": {
+      "kind": "sql",
+      "query": "SELECT COUNT(*) AS value FROM app_practice_decks__runs WHERE member_id = :me AND run_date >= date(:today, 'weekday 0', '-6 days') LIMIT 1"
+    },
+    "display": {
+      "template": "stat",
+      "value": "value",
+      "label": "practice runs this week",
+      "empty_hides": true
+    }
+  },
+  "ai_access": {
+    "allowed": true,
+    "mode": "read",
+    "db_exports": ["decks", "personal_bests", "recent_runs"]
+  },
+  "publishes": ["practice-decks.run_completed"],
+  "nav": { "label": "Decks" },
+  "resource_limits": {
+    "max_db_bytes": 52428800
+  },
+  "icon": "⚡"
+}

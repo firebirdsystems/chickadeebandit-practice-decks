@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Practice Decks</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: var(--hub-bg, #f9fafb);
+      --surface: var(--hub-surface, #ffffff);
+      --border: var(--hub-border, #e5e7eb);
+      --text: var(--hub-text, #111827);
+      --muted: var(--hub-text-muted, #6b7280);
+      --accent: var(--hub-primary, #2563eb);
+      --accent-hover: var(--hub-primary-hover, #1d4ed8);
+      --accent-fg: var(--hub-primary-fg, #ffffff);
+      --radius: var(--hub-radius, 10px);
+      --red: var(--hub-tint-danger-fg, #b91c1c);
+      --red-soft: var(--hub-tint-danger, #fee2e2);
+      --green: #16a34a;
+      --green-soft: var(--hub-tint-success, #dcfce7);
+      --amber-soft: var(--hub-tint-warning, #fef3c7);
+    }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--hub-font, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+      font-size: var(--hub-font-size, 15px);
+      line-height: 1.45;
+    }
+    .app { max-width: 680px; margin: 0 auto; padding: 16px 16px 56px; }
+    .loading { color: var(--muted); text-align: center; padding: 40px 16px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    h1 { font-size: 1.35rem; line-height: 1.2; }
+    h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 800; margin: 22px 0 8px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 22px 0 8px; }
+    .section-head h2 { margin: 0; }
+    .muted { color: var(--muted); }
+    .tiny { font-size: .8rem; }
+    .stack { display: grid; gap: 10px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+    .error { background: var(--red-soft); color: var(--red); padding: 9px 12px; border-radius: 8px; margin-bottom: 10px; font-size: .88rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid transparent; border-radius: 8px; padding: 8px 14px;
+      font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer;
+      min-height: 40px; background: var(--accent); color: var(--accent-fg);
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .btn-big { min-height: 52px; font-size: 1.05rem; padding: 10px 22px; width: 100%; }
+    .btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-sm { min-height: 32px; padding: 4px 10px; font-size: .8rem; }
+    .btn-danger { background: transparent; color: var(--red); border-color: var(--border); }
+    .btn-danger:hover { background: var(--red-soft); }
+    .btn-link { background: none; border: 0; color: var(--muted); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; padding: 4px 6px; min-height: 32px; }
+    .btn-link:hover { color: var(--text); }
+
+    .demo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--amber-soft); border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; font-size: .8rem; color: var(--hub-tint-warning-fg, #78350f); }
+    .demo-bar button { font: inherit; padding: 3px 10px; border-radius: 6px; border: 1px solid #fcd34d; background: var(--surface); color: #78350f; cursor: pointer; }
+    .demo-bar button.on { background: #fde68a; font-weight: 700; }
+
+    .tabs, .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs { margin-bottom: 12px; }
+    .tab, .chip {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px;
+      font: inherit; font-size: .88rem; cursor: pointer; color: var(--text); min-height: 36px;
+    }
+    .tab { color: var(--muted); }
+    .tab.on, .chip.on { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 700; }
+    .chip.op { font-size: 1.15rem; font-weight: 800; min-width: 48px; }
+
+    /* Maths picker */
+    .pick-row { margin-bottom: 12px; }
+    .pick-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 800; margin-bottom: 5px; }
+    .numbers { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .num {
+      aspect-ratio: 1.25; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface);
+      font: inherit; font-size: 1.05rem; font-weight: 800; color: var(--text); cursor: pointer;
+    }
+    .num.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+    .num.in { border-color: var(--accent); }
+    .set-line { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
+    .set-name { font-weight: 800; font-size: 1.05rem; }
+
+    /* Deck rows */
+    .row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+    .row:first-child { border-top: 0; padding-top: 0; }
+    .row:last-child { padding-bottom: 0; }
+    .row-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .row-body { flex: 1; min-width: 0; }
+    .row-title { font-weight: 700; overflow-wrap: anywhere; }
+    .row-time { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .empty { color: var(--muted); text-align: center; padding: 26px 16px; }
+    .search-row { margin-bottom: 10px; }
+    .search-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font: inherit; background: var(--surface); color: var(--text); }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+
+    /* A run */
+    .run-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .run-clock { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .bar { height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; margin-bottom: 18px; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .15s; }
+    .run-card { text-align: center; padding: 26px 16px 22px; }
+    .prompt { font-size: clamp(2.2rem, 11vw, 4rem); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; min-height: 1.2em; }
+    .prompt.words { font-size: clamp(1.4rem, 6vw, 2.2rem); }
+    .hint { color: var(--muted); margin-top: 6px; min-height: 1.4em; }
+    .say { font-size: 2.6rem; width: 92px; height: 92px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); cursor: pointer; }
+    .say:hover { border-color: var(--accent); }
+    .answer {
+      width: 100%; max-width: 320px; margin: 18px auto 0; display: block; text-align: center;
+      font: inherit; font-size: 1.8rem; font-weight: 800; padding: 12px;
+      border: 2.5px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text);
+    }
+    .answer:focus { outline: none; border-color: var(--accent); }
+    .answer.wrong { border-color: var(--red); animation: shake .3s; }
+    @keyframes shake { 25% { transform: translateX(-7px); } 75% { transform: translateX(7px); } }
+    @media (prefers-reduced-motion: reduce) { .answer.wrong { animation: none; } .bar-fill { transition: none; } }
+    .feedback { min-height: 2.9em; margin-top: 12px; font-weight: 700; }
+    .feedback.bad { color: var(--red); }
+    .feedback b { font-size: 1.25rem; }
+    .run-actions { display: flex; justify-content: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+
+    /* Finished */
+    .done { text-align: center; padding: 28px 16px; }
+    .done-time { font-size: clamp(2.6rem, 13vw, 4.4rem); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .done-verdict { font-size: 1.15rem; font-weight: 800; margin-top: 8px; }
+    .done-verdict.best { color: var(--green); }
+    .missed { text-align: left; margin-top: 16px; }
+    .missed li { list-style: none; padding: 6px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; }
+    .missed li b { white-space: nowrap; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal { background: var(--surface); border-radius: var(--radius); padding: 22px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
+    .field { display: grid; gap: 4px; margin-bottom: 14px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 800; }
+    input[type=text], select, textarea {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 9px 11px; font: inherit; background: var(--surface); color: var(--text);
+    }
+    input[type=text]:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    textarea { min-height: 170px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+    .modal-actions .spacer { flex: 1; }
+  </style>
+  <base href="/run/practice-decks/">
+</head>
+<body>
+<div id="root" class="app"><div class="loading">Loading…</div></div>
+
+<script type="module">
+import {
+  esc, isAdult, hubConfirm, hubToday, searchMatch,
+  createDbHelper, createEventsHelper,
+} from "/hub-sdk.js";
+import {
+  OPS, RUN_LENGTHS, DEFAULT_RUN_LENGTH, MODES, MAX_CARDS,
+  mathSpec, mathKey, parseMathKey, mathLabel, mathFacts,
+  deckKey, readCards, parseCards, cardsToText,
+  isCorrect, shownAnswer, runLength, buildRun,
+  formatTime, findBest, compareRun, nextBest, dayLabel,
+  canEditDeck, canSeeFamily, searchableFields,
+} from "./logic.js";
+
+// --- Hub runtime globals (empty in demo mode) --------------------------------
+const CONTEXT = window.__CONTEXT_URL ?? "";
+const DB_URL = window.__DB_URL ?? "";
+const APP_ID = window.__APP_ID ?? "practice-decks";
+const HUB_MEMBER = window.__CURRENT_MEMBER ?? null;
+const DEMO = !DB_URL;
+
+const db = createDbHelper(DB_URL);
+const events = createEventsHelper(DEMO ? "" : (window.__EVENTS_URL ?? "/api/events"), APP_ID);
+
+// The first-render reads. Each is declared, byte for byte, in manifest.preload,
+// so the hub answers this batch from the document it already rendered. Keep the
+// two copies identical — __tests__/preload.test.mjs checks that they are.
+const SQL_DECKS = "SELECT * FROM app_practice_decks__decks ORDER BY created_at DESC, id DESC LIMIT 100";
+const SQL_BESTS = "SELECT * FROM app_practice_decks__bests WHERE member_id = ? ORDER BY last_date DESC, deck_key LIMIT 300";
+const SQL_RUNS = "SELECT * FROM app_practice_decks__runs WHERE member_id = ? ORDER BY created_at DESC LIMIT 50";
+
+// --- App state ---------------------------------------------------------------
+let members = [];
+let memberMap = new Map();
+let demoMe = null;
+let decks = [];
+let bests = [];           // mine
+let runs = [];            // mine, newest first
+let family = null;        // { bests, runs } for every member; adults only, on demand
+let screen = "home";      // home | run | done | family
+let pick = { op: "mul", scope: "only", n: 2 };
+let length = DEFAULT_RUN_LENGTH;
+let run = null;           // the run in progress
+let result = null;        // the run just finished
+let searchQ = "";
+let error = "";
+let modalEl = null;
+let ready = false;
+let peekTimer = 0;
+
+const me = () => demoMe ?? HUB_MEMBER;
+const today = () => hubToday();
+const nowIso = () => new Date().toISOString();
+// A form control by name. Always through form.elements: "name" and "title" are
+// also properties of the form element itself.
+const field = (form, name) => form.elements.namedItem(name);
+const memberName = (id) => memberMap.get(id)?.name ?? "Someone";
+const canSpeak = typeof window.speechSynthesis !== "undefined" && typeof window.SpeechSynthesisUtterance !== "undefined";
+
+// --- Loading -----------------------------------------------------------------
+async function loadMembers() {
+  if (!CONTEXT) {
+    members = [
+      { id: "demo-parent", name: "Sam", role: "adult" },
+      { id: "demo-maya", name: "Maya", role: "child" },
+      { id: "demo-leo", name: "Leo", role: "child" },
+    ];
+  } else {
+    try {
+      const res = await fetch(`${CONTEXT}?keys=family.members`);
+      members = ((await res.json())["family.members"]) ?? [];
+    } catch { members = []; }
+  }
+  memberMap = new Map(members.map(m => [m.id, m]));
+  if (!HUB_MEMBER && !demoMe) demoMe = members.find(m => !isAdult(m)) ?? members[0] ?? null;
+}
+
+let demoStore = null;
+function demoData() {
+  if (!demoStore) {
+    const t = today();
+    const stamp = "2026-01-01T12:00:00.000Z";
+    demoStore = {
+      decks: [
+        { id: "demo-spell", title: "Spelling — week 6", mode: "spelling", visibility: "everyone", created_by: "demo-parent", created_at: stamp, updated_at: stamp,
+          cards: JSON.stringify([{ q: "you need it", a: "necessary" }, { q: "a steady beat", a: "rhythm" }, { q: "", a: "because" }, { q: "", a: "friend" }, { q: "", a: "different" }]) },
+        { id: "demo-caps", title: "Capital cities", mode: "cards", visibility: "everyone", created_by: "demo-parent", created_at: stamp, updated_at: stamp,
+          cards: JSON.stringify([{ q: "France", a: "Paris" }, { q: "Japan", a: "Tokyo" }, { q: "Kenya", a: "Nairobi" }, { q: "Peru", a: "Lima" }, { q: "Canada", a: "Ottawa" }, { q: "Egypt", a: "Cairo" }]) },
+      ],
+      bests: [
+        { id: "demo-b1", member_id: "demo-maya", deck_key: "math:mul:only:7", card_count: 20, label: "7 times table", best_ms: 48300, best_date: t, run_count: 4, last_date: t },
+        { id: "demo-b2", member_id: "demo-maya", deck_key: "math:mul:only:2", card_count: 20, label: "2 times table", best_ms: 31200, best_date: t, run_count: 2, last_date: t },
+        { id: "demo-b3", member_id: "demo-leo", deck_key: "math:add:upto:10", card_count: 20, label: "Adding up to 10", best_ms: 62500, best_date: t, run_count: 3, last_date: t },
+      ],
+      runs: [
+        { id: "demo-r1", member_id: "demo-maya", deck_key: "math:mul:only:7", label: "7 times table", card_count: 20, missed_count: 2, duration_ms: 48300, run_date: t, created_at: `${t}T16:00:00.000Z` },
+        { id: "demo-r2", member_id: "demo-maya", deck_key: "math:mul:only:7", label: "7 times table", card_count: 20, missed_count: 4, duration_ms: 55900, run_date: t, created_at: `${t}T15:50:00.000Z` },
+        { id: "demo-r3", member_id: "demo-leo", deck_key: "math:add:upto:10", label: "Adding up to 10", card_count: 20, missed_count: 1, duration_ms: 62500, run_date: t, created_at: `${t}T15:00:00.000Z` },
+      ],
+    };
+  }
+  const id = me()?.id;
+  decks = demoStore.decks;
+  bests = demoStore.bests.filter(b => b.member_id === id);
+  runs = demoStore.runs.filter(r => r.member_id === id);
+}
+
+async function loadData() {
+  if (DEMO) { demoData(); return; }
+  const id = me()?.id;
+  if (!id) { decks = []; bests = []; runs = []; return; }
+  const [d, b, r] = await db.batch([
+    { sql: SQL_DECKS },
+    { sql: SQL_BESTS, params: [id] },
+    { sql: SQL_RUNS, params: [id] },
+  ]);
+  decks = d.rows ?? [];
+  bests = b.rows ?? [];
+  runs = r.rows ?? [];
+}
+
+async function loadFamily() {
+  if (!canSeeFamily(me())) return;
+  if (DEMO) { family = { bests: demoStore.bests, runs: demoStore.runs }; return; }
+  const [b, r] = await db.batch([
+    { sql: "SELECT * FROM app_practice_decks__bests ORDER BY last_date DESC, member_id LIMIT 500" },
+    { sql: "SELECT * FROM app_practice_decks__runs ORDER BY created_at DESC LIMIT 100" },
+  ]);
+  family = { bests: b.rows ?? [], runs: r.rows ?? [] };
+}
+
+async function refresh() {
+  try {
+    await loadMembers();
+    await loadData();
+    // Open on whatever was practised last, so "go again" is one tap.
+    const last = runs.map(r => parseMathKey(r.deck_key)).find(Boolean);
+    if (last) pick = last;
+    error = "";
+  } catch (e) {
+    error = e.message;
+  }
+  ready = true;
+  render();
+}
+
+// --- Sets --------------------------------------------------------------------
+/** Everything needed to start a run of the picked maths set. */
+function mathSet() {
+  const spec = mathSpec(pick.op, pick.scope, pick.n) ?? mathSpec("mul", "only", 2);
+  const cards = mathFacts(spec);
+  return { key: mathKey(spec), label: mathLabel(spec), cards, numeric: true, mode: "cards", count: runLength(cards.length, length, true) };
+}
+
+function deckSet(deck) {
+  const cards = readCards(deck.cards);
+  return { key: deckKey(deck.id), label: deck.title, cards, numeric: false, mode: deck.mode === "spelling" ? "spelling" : "cards", count: runLength(cards.length, length, false) };
+}
+
+function bestLine(set) {
+  const best = findBest(bests, me()?.id, set.key, set.count);
+  if (!best) return `<span class="muted">No time yet for ${set.count} cards</span>`;
+  return `Best <b>${formatTime(best.best_ms)}</b> <span class="muted">· ${Number(best.run_count) || 0} ${Number(best.run_count) === 1 ? "run" : "runs"}</span>`;
+}
+
+// --- A run -------------------------------------------------------------------
+function speak(text) {
+  if (!canSpeak) return;
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.85;
+    window.speechSynthesis.speak(utterance);
+  } catch { /* a device that cannot speak falls back to Peek */ }
+}
+
+function startRun(set) {
+  if (!me() || !set.count) return;
+  run = { ...set, queue: buildRun(set.cards, set.count), index: 0, missed: new Set(), revealed: false, startedAt: 0 };
+  result = null;
+  error = "";
+  screen = "run";
+  render();
+  showCard();
+}
+
+/** Fill the run screen for the current card. The input is never re-created, so
+ *  a phone keeps its keyboard up from the first card to the last. */
+function showCard() {
+  const card = run.queue[run.index];
+  const promptEl = document.getElementById("prompt");
+  const hintEl = document.getElementById("hint");
+  const input = document.getElementById("answer");
+  if (!promptEl || !input) return;
+  clearTimeout(peekTimer);
+  run.revealed = false;
+  document.getElementById("progress").textContent = `${run.index + 1} of ${run.count}`;
+  document.getElementById("bar").style.width = `${(run.index / run.count) * 100}%`;
+  document.getElementById("feedback").className = "feedback";
+  document.getElementById("feedback").textContent = "";
+  if (run.mode === "spelling") {
+    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Hear the word">🔊</button>`;
+    hintEl.textContent = card.q ? `Hint: ${card.q}` : "";
+    if (canSpeak) speak(shownAnswer(card.a)); else peek(false);
+  } else {
+    promptEl.textContent = card.q;
+    hintEl.textContent = "";
+  }
+  input.value = "";
+  input.classList.remove("wrong");
+  input.focus();
+  // The clock starts when the first card is on the screen, not when Start was tapped.
+  if (!run.startedAt) run.startedAt = performance.now();
+}
+
+/** Show a spelling word briefly. A peek the child asked for counts as a miss. */
+function peek(counts) {
+  const card = run?.queue[run.index];
+  const promptEl = document.getElementById("prompt");
+  if (!card || !promptEl || run.mode !== "spelling") return;
+  if (counts) run.missed.add(run.index);
+  clearTimeout(peekTimer);
+  promptEl.textContent = shownAnswer(card.a);
+  peekTimer = setTimeout(() => {
+    if (!run || run.revealed) return;
+    promptEl.innerHTML = `<button type="button" class="say" data-action="say" aria-label="Show the word again">${canSpeak ? "🔊" : "👀"}</button>`;
+  }, 1500);
+  document.getElementById("answer")?.focus();
+}
+
+function checkAnswer() {
+  if (!run) return;
+  const input = document.getElementById("answer");
+  const card = run.queue[run.index];
+  if (!input || !card || !input.value.trim()) return;
+  if (isCorrect(input.value, card.a, run.numeric)) {
+    if (run.index + 1 >= run.count) { finishRun(); return; }
+    run.index++;
+    showCard();
+    return;
+  }
+  // Wrong: show the answer, and ask for it to be typed before moving on. The
+  // clock keeps running, so a miss costs time rather than ending the run.
+  run.missed.add(run.index);
+  run.revealed = true;
+  clearTimeout(peekTimer);
+  const feedback = document.getElementById("feedback");
+  feedback.className = "feedback bad";
+  feedback.innerHTML = `${run.mode === "spelling" ? "It is spelled" : "The answer is"} <b>${esc(shownAnswer(card.a))}</b><br><span class="tiny">Type it to keep going</span>`;
+  input.value = "";
+  input.classList.remove("wrong");
+  void input.offsetWidth; // restart the shake
+  input.classList.add("wrong");
+  input.focus();
+}
+
+/** Write a finished run and move the best on. Returns the comparison with
+ *  the best as it stood before, which is what the result screen reports. */
+async function persistRun(row) {
+  const before = findBest(bests, row.member_id, row.deck_key, row.card_count);
+  const after = nextBest(before, row, crypto.randomUUID());
+  await db.batch([
+    { sql: "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      params: [row.id, row.member_id, row.deck_key, row.label, row.card_count, row.missed_count, row.duration_ms, row.run_date, row.created_at] },
+    before
+      ? { sql: "UPDATE app_practice_decks__bests SET label = ?, best_ms = ?, best_date = ?, run_count = ?, last_date = ? WHERE id = ?",
+          params: [after.label, after.best_ms, after.best_date, after.run_count, after.last_date, after.id] }
+      : { sql: "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          params: [after.id, after.member_id, after.deck_key, after.card_count, after.label, after.best_ms, after.best_date, after.run_count, after.last_date] },
+  ]);
+  runs = [row, ...runs.filter(r => r.id !== row.id)].slice(0, 50);
+  bests = [after, ...bests.filter(b => b !== before)];
+  if (DEMO) {
+    demoStore.runs = [row, ...demoStore.runs];
+    demoStore.bests = [after, ...demoStore.bests.filter(b => b !== before)];
+  }
+  family = null;
+  return { before, comparison: compareRun(row.duration_ms, before) };
+}
+
+async function finishRun() {
+  const who = me();
+  const finished = run;
+  const durationMs = Math.max(1, Math.round(performance.now() - finished.startedAt));
+  const row = {
+    id: crypto.randomUUID(), member_id: who.id, deck_key: finished.key, label: finished.label,
+    card_count: finished.count, missed_count: finished.missed.size, duration_ms: durationMs,
+    run_date: today(), created_at: nowIso(),
+  };
+  const before = findBest(bests, who.id, row.deck_key, row.card_count);
+  const missedCards = [...finished.missed].map(i => finished.queue[i]).filter((c, i, all) => all.indexOf(c) === i);
+  // Show the time at once; the write follows. A child who has just finished
+  // should not be looking at the last card while the network catches up.
+  result = { row, set: finished, comparison: compareRun(durationMs, before), before, missedCards };
+  run = null;
+  clearTimeout(peekTimer);
+  window.speechSynthesis?.cancel?.();
+  screen = "done";
+  render();
+
+  let saved;
+  try {
+    saved = await persistRun(row);
+  } catch {
+    // The usual cause is a best this device had not loaded (set on another
+    // device a moment ago), which makes the INSERT collide. Re-read and try
+    // once more against what is really there.
+    try {
+      await loadData();
+      saved = await persistRun(row);
+    } catch (e) {
+      error = `This run could not be saved: ${e.message}`;
+      if (result?.row === row) render();
+      return;
+    }
+  }
+  if (result?.row === row && (saved.before !== before)) {
+    result = { ...result, ...saved };
+    render();
+  }
+  // One event per set, length and day: a child who repeats a set ten times in
+  // an afternoon has practised it once as far as any reward is concerned.
+  events.publish("practice-decks.run_completed", {
+    member_id: who.id, deck_key: row.deck_key, cards: row.card_count, missed: row.missed_count,
+    duration_ms: row.duration_ms, personal_best: saved.comparison.isBest,
+  }, who.id, { idempotencyKey: `${row.deck_key}:${row.card_count}:${row.run_date}` })?.catch?.(() => {});
+}
+
+async function quitRun() {
+  const ok = await hubConfirm({ message: "Stop this run?", description: "The time will not be saved.", confirmLabel: "Stop", destructive: true });
+  if (!ok) { document.getElementById("answer")?.focus(); return; }
+  clearTimeout(peekTimer);
+  window.speechSynthesis?.cancel?.();
+  run = null;
+  screen = "home";
+  render();
+}
+
+// --- Deck writes -------------------------------------------------------------
+async function saveDeck(form) {
+  const who = me();
+  if (!who) return;
+  const id = form.dataset.id || "";
+  const existing = id ? decks.find(d => d.id === id) : null;
+  if (id && !canEditDeck(who, existing)) return;
+  const title = field(form, "title").value.trim();
+  const mode = field(form, "mode").value === "spelling" ? "spelling" : "cards";
+  const visibility = field(form, "visibility").value === "mine" ? "mine" : "everyone";
+  const { cards } = parseCards(field(form, "cards").value, mode);
+  if (!title) { field(form, "title").focus(); return; }
+  if (!cards.length) { field(form, "cards").focus(); return; }
+  const button = form.querySelector("button[type=submit]");
+  if (button) { button.disabled = true; button.textContent = "Saving…"; }
+  const stamp = nowIso();
+  const json = JSON.stringify(cards);
+  try {
+    if (existing) {
+      await db("UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?", [title, mode, json, visibility, stamp, id]);
+      const next = { ...existing, title, mode, cards: json, visibility, updated_at: stamp };
+      decks = decks.map(d => (d.id === id ? next : d));
+      if (DEMO) demoStore.decks = decks;
+    } else {
+      const row = { id: crypto.randomUUID(), title, mode, cards: json, visibility, created_by: who.id, created_at: stamp, updated_at: stamp };
+      await db(
+        "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [row.id, row.title, row.mode, row.cards, row.visibility, row.created_by, row.created_at, row.updated_at]
+      );
+      decks = [row, ...decks];
+      if (DEMO) demoStore.decks = decks;
+    }
+    error = "";
+    closeModal();
+    render();
+  } catch (e) {
+    if (button) { button.disabled = false; button.textContent = "Save"; }
+    const note = form.querySelector("[data-form-error]");
+    if (note) { note.textContent = e.message; note.style.display = ""; }
+  }
+}
+
+async function deleteDeck(id) {
+  const deck = decks.find(d => d.id === id);
+  if (!canEditDeck(me(), deck)) return;
+  const ok = await hubConfirm({ message: `Delete "${deck.title}"?`, description: "Best times already set with it are kept.", confirmLabel: "Delete", destructive: true });
+  if (!ok) return;
+  try {
+    await db("DELETE FROM app_practice_decks__decks WHERE id = ?", [id]);
+    decks = decks.filter(d => d.id !== id);
+    if (DEMO) demoStore.decks = decks;
+    error = "";
+    closeModal();
+  } catch (e) {
+    error = e.message;
+  }
+  render();
+}
+
+// --- Rendering ---------------------------------------------------------------
+function renderDemoBar() {
+  if (CONTEXT) return "";
+  return `<div class="demo-bar"><strong>Demo — preview as:</strong>${members.map(m =>
+    `<button type="button" class="${me()?.id === m.id ? "on" : ""}" data-action="demo-me" data-id="${esc(m.id)}">${esc(m.name)} (${esc(m.role)})</button>`).join("")}</div>`;
+}
+
+function renderLengths() {
+  return `<div class="chips" role="group" aria-label="Cards in a run">${RUN_LENGTHS.map(n =>
+    `<button type="button" class="chip ${n === length ? "on" : ""}" data-action="length" data-id="${n}">${n} cards</button>`).join("")}</div>`;
+}
+
+function renderMath() {
+  const set = mathSet();
+  const max = OPS[pick.op].max;
+  return `<div class="card">
+    <div class="pick-row">
+      <div class="chips" role="group" aria-label="Kind of sum">${Object.entries(OPS).map(([op, def]) =>
+        `<button type="button" class="chip op ${op === pick.op ? "on" : ""}" data-action="op" data-id="${op}" aria-label="${def.name}">${def.symbol}</button>`).join("")}</div>
+    </div>
+    <div class="pick-row">
+      <div class="chips" role="group" aria-label="Which tables">
+        <button type="button" class="chip ${pick.scope === "only" ? "on" : ""}" data-action="scope" data-id="only">Just one</button>
+        <button type="button" class="chip ${pick.scope === "upto" ? "on" : ""}" data-action="scope" data-id="upto">Everything up to</button>
+      </div>
+    </div>
+    <div class="pick-row">
+      <div class="numbers">${Array.from({ length: max }, (_, i) => i + 1).map(n =>
+        `<button type="button" class="num ${n === pick.n ? "on" : ""} ${pick.scope === "upto" && n < pick.n ? "in" : ""}" data-action="num" data-id="${n}">${n}</button>`).join("")}</div>
+    </div>
+    <div class="set-line">
+      <div class="set-name">${esc(set.label)}</div>
+      <div class="tiny">${bestLine(set)}</div>
+    </div>
+    <button type="button" class="btn btn-big" data-action="start-math">▶ Start</button>
+  </div>`;
+}
+
+function renderDeckList() {
+  const who = me();
+  const list = searchQ ? decks.filter(d => searchMatch(searchQ, searchableFields(d))) : decks;
+  if (!decks.length) return `<div class="empty">No decks yet. Add this week's spelling words, or anything else worth knowing by heart.</div>`;
+  if (!list.length) return `<div class="empty">No decks match "${esc(searchQ)}".</div>`;
+  return list.map(deck => {
+    const set = deckSet(deck);
+    const total = set.cards.length;
+    return `<div class="row">
+      <div class="row-icon">${deck.mode === "spelling" ? "🔤" : "🃏"}</div>
+      <div class="row-body">
+        <div class="row-title">${esc(deck.title)}</div>
+        <div class="tiny muted">${total} ${total === 1 ? "card" : "cards"} · ${esc(MODES[set.mode])}${deck.visibility === "mine" ? " · private" : ""}</div>
+        <div class="tiny">${total ? bestLine(set) : ""}</div>
+      </div>
+      <div class="actions">
+        ${canEditDeck(who, deck) ? `<button type="button" class="btn-link" data-action="deck-edit" data-id="${esc(deck.id)}">Edit</button>` : ""}
+        <button type="button" class="btn" data-action="start-deck" data-id="${esc(deck.id)}" ${total ? "" : "disabled"}>▶ Start</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderRuns(list, withNames) {
+  const t = today();
+  return list.map(r => `<div class="row">
+      <div class="row-body">
+        <div class="row-title">${withNames ? `${esc(memberName(r.member_id))} · ` : ""}${esc(r.label || "Practice")}</div>
+        <div class="tiny muted">${esc(dayLabel(r.run_date, t))} · ${Number(r.card_count) || 0} cards · ${Number(r.missed_count) ? `${Number(r.missed_count)} missed` : "all right first time"}</div>
+      </div>
+      <div class="row-time">${formatTime(r.duration_ms)}</div>
+    </div>`).join("");
+}
+
+function renderHome() {
+  const who = me();
+  return `
+    ${canSeeFamily(who) ? `<div class="tabs">
+      <button type="button" class="tab on" data-action="screen" data-id="home">Practise</button>
+      <button type="button" class="tab" data-action="screen" data-id="family">Family</button>
+    </div>` : ""}
+    <div class="section-head"><h2>Maths facts</h2>${renderLengths()}</div>
+    ${renderMath()}
+    <div class="section-head"><h2>Decks</h2>${who ? `<button type="button" class="btn btn-ghost btn-sm" data-action="deck-new">+ New deck</button>` : ""}</div>
+    ${decks.length > 6 ? `<div class="search-row"><input id="search" class="search-input" type="search" placeholder="Search decks…" aria-label="Search decks" value="${esc(searchQ)}" /></div>` : ""}
+    <div class="card" id="deck-list">${renderDeckList()}</div>
+    ${runs.length ? `<h2>My recent runs</h2><div class="card">${renderRuns(runs.slice(0, 8), false)}</div>` : ""}
+  `;
+}
+
+function renderFamily() {
+  const tabs = `<div class="tabs">
+      <button type="button" class="tab" data-action="screen" data-id="home">Practise</button>
+      <button type="button" class="tab on" data-action="screen" data-id="family">Family</button>
+    </div>`;
+  if (!family) return `${tabs}<div class="loading">Loading…</div>`;
+  const t = today();
+  const byMember = members.map(m => ({ member: m, rows: family.bests.filter(b => b.member_id === m.id) })).filter(x => x.rows.length);
+  if (!byMember.length) return `${tabs}<div class="card empty">Nobody has finished a run yet.</div>`;
+  return `${tabs}
+    ${byMember.map(({ member, rows }) => `<h2>${esc(member.name)}</h2>
+      <div class="card">${rows.map(b => `<div class="row">
+        <div class="row-body">
+          <div class="row-title">${esc(b.label || "Practice")}</div>
+          <div class="tiny muted">${Number(b.card_count) || 0} cards · ${Number(b.run_count) || 0} ${Number(b.run_count) === 1 ? "run" : "runs"} · last ${esc(dayLabel(b.last_date, t).toLowerCase())}</div>
+        </div>
+        <div class="row-time">${formatTime(b.best_ms)}</div>
+      </div>`).join("")}</div>`).join("")}
+    ${family.runs.length ? `<h2>Recent runs</h2><div class="card">${renderRuns(family.runs.slice(0, 30), true)}</div>` : ""}`;
+}
+
+function renderRun() {
+  return `
+    <div class="run-top">
+      <div><div class="row-title">${esc(run.label)}</div><div class="tiny muted" id="progress"></div></div>
+      <div class="run-clock" id="clock">0.0s</div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+    <form id="run-form" class="card run-card" autocomplete="off">
+      <div class="prompt ${run.numeric ? "" : "words"}" id="prompt" aria-live="polite"></div>
+      <div class="hint" id="hint"></div>
+      <input id="answer" class="answer" type="text" ${run.numeric ? `inputmode="numeric" pattern="[0-9]*"` : ""}
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Your answer" />
+      <div class="feedback" id="feedback" aria-live="assertive"></div>
+      <div class="run-actions">
+        ${run.mode === "spelling" ? `<button type="button" class="btn btn-ghost btn-sm" data-action="peek">👀 Peek</button>` : ""}
+        <button type="submit" class="btn">Check</button>
+      </div>
+    </form>
+    <p style="text-align:center;margin-top:14px"><button type="button" class="btn-link" data-action="quit">Stop this run</button></p>
+  `;
+}
+
+function renderDone() {
+  const { row, comparison, before, missedCards, set } = result;
+  const right = row.card_count - row.missed_count;
+  let verdict;
+  if (comparison.firstTime) verdict = `<div class="done-verdict best">Your first time for this set. That's the one to beat.</div>`;
+  else if (comparison.isBest) verdict = `<div class="done-verdict best">New best! 🎉 ${formatTime(-comparison.deltaMs)} faster</div>`;
+  else verdict = `<div class="done-verdict">Your best is ${formatTime(before.best_ms)} — ${formatTime(comparison.deltaMs)} to find</div>`;
+  return `
+    <div class="card done">
+      <div class="muted">${esc(row.label)} · ${row.card_count} cards</div>
+      <div class="done-time">${formatTime(row.duration_ms)}</div>
+      ${verdict}
+      <div class="muted" style="margin-top:6px">${right} of ${row.card_count} right first time</div>
+      ${missedCards.length ? `<ul class="missed"><li class="tiny muted">Worth another look</li>${missedCards.map(c =>
+        `<li><span>${esc(set.mode === "spelling" ? (c.q || "Spelling") : c.q)}</span><b>${esc(shownAnswer(c.a))}</b></li>`).join("")}</ul>` : ""}
+    </div>
+    <div class="stack" style="margin-top:12px">
+      <button type="button" class="btn btn-big" data-action="again" data-autofocus>▶ Go again</button>
+      <button type="button" class="btn btn-ghost btn-big" data-action="screen" data-id="home">Done</button>
+    </div>
+  `;
+}
+
+function render() {
+  const root = document.getElementById("root");
+  if (!ready) return;
+  const who = me();
+  const body = !who ? `<div class="card empty">Sign in to practise.</div>`
+    : screen === "run" && run ? renderRun()
+    : screen === "done" && result ? renderDone()
+    : screen === "family" && canSeeFamily(who) ? renderFamily()
+    : renderHome();
+  root.innerHTML = `
+    ${screen === "run" ? "" : `<div class="topbar"><h1>⚡ Practice Decks</h1></div>${renderDemoBar()}`}
+    ${error ? `<div class="error" role="alert">${esc(error)}</div>` : ""}
+    ${body}
+  `;
+  if (screen === "done") requestAnimationFrame(() => root.querySelector("[data-autofocus]")?.focus());
+}
+
+// Only the clock changes while a run is on; the card itself is filled in place.
+setInterval(() => {
+  if (screen !== "run" || !run?.startedAt) return;
+  const el = document.getElementById("clock");
+  if (el) el.textContent = formatTime(performance.now() - run.startedAt);
+}, 100);
+
+// --- Deck editor -------------------------------------------------------------
+function openModal(html) {
+  closeModal();
+  modalEl = document.createElement("div");
+  modalEl.className = "modal-backdrop";
+  modalEl.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  modalEl.addEventListener("click", (e) => { if (e.target === modalEl) closeModal(); });
+  document.body.appendChild(modalEl);
+  requestAnimationFrame(() => modalEl?.querySelector("[data-autofocus]")?.focus());
+}
+function closeModal() { modalEl?.remove(); modalEl = null; }
+
+const PLACEHOLDERS = {
+  cards: "One card per line: question = answer\n\nFrance = Paris\nJapan = Tokyo\ncolour (US) = color",
+  spelling: "One word per line. A hint is optional.\n\nnecessary\nrhythm = a steady beat\nbecause",
+};
+
+function cardCountText(text, mode) {
+  const { cards, skipped } = parseCards(text, mode);
+  const count = `${cards.length} ${cards.length === 1 ? "card" : "cards"}`;
+  return skipped ? `${count} · ${skipped} ${skipped === 1 ? "line" : "lines"} not used` : count;
+}
+
+function openDeckModal(id) {
+  const who = me();
+  const existing = id ? decks.find(d => d.id === id) : null;
+  if (!who || (id && !canEditDeck(who, existing))) return;
+  const mode = existing?.mode === "spelling" ? "spelling" : "cards";
+  const text = existing ? cardsToText(readCards(existing.cards), mode) : "";
+  openModal(`
+    <form id="deck-form" data-id="${esc(existing?.id ?? "")}">
+      <div class="modal-title">${existing ? "Edit deck" : "New deck"}</div>
+      <div class="error" data-form-error style="display:none"></div>
+      <div class="field">
+        <label for="f-title">Name</label>
+        <input type="text" id="f-title" name="title" maxlength="80" placeholder="Spelling — week 6" value="${esc(existing?.title ?? "")}" data-autofocus required />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-mode">Kind</label>
+          <select id="f-mode" name="mode">${Object.entries(MODES).map(([value, label]) => `<option value="${value}" ${value === mode ? "selected" : ""}>${esc(label)}</option>`).join("")}</select>
+        </div>
+        <div class="field">
+          <label for="f-visibility">Who can use it</label>
+          <select id="f-visibility" name="visibility">
+            <option value="everyone" ${existing?.visibility === "mine" ? "" : "selected"}>The whole family</option>
+            <option value="mine" ${existing?.visibility === "mine" ? "selected" : ""}>${isAdult(who) ? "Adults only" : "Me and my parents"}</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-cards">Cards</label>
+        <textarea id="f-cards" name="cards" spellcheck="false" placeholder="${esc(PLACEHOLDERS[mode])}">${esc(text)}</textarea>
+        <div class="tiny muted" id="card-count">${esc(cardCountText(text, mode))} · up to ${MAX_CARDS}</div>
+        <div class="tiny muted" id="mode-help">${mode === "spelling" ? "Each word is read aloud and typed from memory." : "Write answers with “|” between them to accept more than one: color|colour"}</div>
+      </div>
+      <div class="modal-actions">
+        ${existing ? `<button type="button" class="btn btn-danger btn-sm" data-action="deck-delete" data-id="${esc(existing.id)}">Delete</button><span class="spacer"></span>` : ""}
+        <button type="button" class="btn btn-ghost" data-action="modal-close">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>`);
+}
+
+function syncDeckForm() {
+  const form = modalEl?.querySelector("#deck-form");
+  if (!form) return;
+  const mode = field(form, "mode").value === "spelling" ? "spelling" : "cards";
+  field(form, "cards").placeholder = PLACEHOLDERS[mode];
+  form.querySelector("#card-count").textContent = `${cardCountText(field(form, "cards").value, mode)} · up to ${MAX_CARDS}`;
+  form.querySelector("#mode-help").textContent = mode === "spelling"
+    ? "Each word is read aloud and typed from memory."
+    : "Write answers with “|” between them to accept more than one: color|colour";
+}
+
+// --- Events ------------------------------------------------------------------
+async function go(next) {
+  screen = next;
+  render();
+  if (next === "family" && !family) {
+    try { await loadFamily(); error = ""; } catch (e) { error = e.message; family = { bests: [], runs: [] }; }
+    if (screen === "family") render();
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-action]");
+  if (!target) return;
+  const id = target.getAttribute("data-id") ?? "";
+  switch (target.getAttribute("data-action")) {
+    case "demo-me":
+      demoMe = memberMap.get(id) ?? null; family = null; screen = "home"; searchQ = "";
+      demoData(); render(); break;
+    case "screen": go(id === "family" ? "family" : "home"); break;
+    case "op": {
+      const max = OPS[id]?.max;
+      if (max) { pick = { ...pick, op: id, n: Math.min(pick.n, max) }; render(); }
+      break;
+    }
+    case "scope": pick = { ...pick, scope: id === "upto" ? "upto" : "only" }; render(); break;
+    case "num": pick = { ...pick, n: Number(id) }; render(); break;
+    case "length": length = RUN_LENGTHS.includes(Number(id)) ? Number(id) : DEFAULT_RUN_LENGTH; render(); break;
+    case "start-math": startRun(mathSet()); break;
+    case "start-deck": {
+      const deck = decks.find(d => d.id === id);
+      if (deck) startRun(deckSet(deck));
+      break;
+    }
+    case "again": if (result) startRun(result.set); break;
+    case "say": if (canSpeak && run) { speak(shownAnswer(run.queue[run.index].a)); document.getElementById("answer")?.focus(); } else peek(true); break;
+    case "peek": peek(true); break;
+    case "quit": quitRun(); break;
+    case "deck-new": openDeckModal(""); break;
+    case "deck-edit": openDeckModal(id); break;
+    case "deck-delete": deleteDeck(id); break;
+    case "modal-close": closeModal(); break;
+  }
+});
+
+document.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (event.target.id === "run-form") checkAnswer();
+  else if (event.target.id === "deck-form") saveDeck(event.target);
+});
+
+document.addEventListener("input", (event) => {
+  const el = event.target;
+  if (el.id === "answer" && run) {
+    el.classList.remove("wrong");
+    // A sum is checked as soon as enough digits are typed, so a run is not a
+    // contest of who finds the Enter key fastest.
+    if (run.numeric && el.value.replace(/\D/g, "").length >= run.queue[run.index].a.length) checkAnswer();
+    return;
+  }
+  if (el.id === "search") {
+    searchQ = el.value;
+    const list = document.getElementById("deck-list");
+    if (list) list.innerHTML = renderDeckList();
+    return;
+  }
+  if (el.id === "f-cards") syncDeckForm();
+});
+
+document.addEventListener("change", (event) => { if (event.target.id === "f-mode") syncDeckForm(); });
+document.addEventListener("keydown", (event) => { if (event.key === "Escape" && modalEl) closeModal(); });
+
+refresh();
+</script>
+</body>
+</html>

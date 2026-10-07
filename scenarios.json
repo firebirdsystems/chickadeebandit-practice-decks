@@ -1,0 +1,227 @@
+{
+  "scenarios": [
+    {
+      "name": "a child's times are their own: a sibling cannot read them, a parent can",
+      "members": { "parent": "adult", "kidA": "child", "kidB": "child" },
+      "steps": [
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["r1", "{{kidA}}", "math:mul:only:7", "7 times table", 20, 2, 48300, "2026-01-05", "2026-01-05T17:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["b1", "{{kidA}}", "math:mul:only:7", 20, "7 times table", 48300, "2026-01-05", 1, "2026-01-05"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "SELECT * FROM app_practice_decks__runs WHERE member_id = ? ORDER BY created_at DESC LIMIT 50",
+          "params": ["{{kidA}}"],
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "SELECT * FROM app_practice_decks__bests ORDER BY last_date DESC, member_id LIMIT 500",
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "SELECT * FROM app_practice_decks__bests WHERE member_id = ? ORDER BY last_date DESC, deck_key LIMIT 300",
+          "params": ["{{kidA}}"],
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "deck_key": "math:mul:only:7", "card_count": 20, "best_ms": 48300, "label": "7 times table" }] }
+        },
+        {
+          "action": "db",
+          "as": "parent",
+          "sql": "SELECT * FROM app_practice_decks__bests ORDER BY last_date DESC, member_id LIMIT 500",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "best_ms": 48300, "run_count": 1 }] }
+        },
+        {
+          "action": "db",
+          "as": "parent",
+          "sql": "SELECT * FROM app_practice_decks__runs ORDER BY created_at DESC LIMIT 100",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "r1", "duration_ms": 48300, "missed_count": 2 }] }
+        },
+        {
+          "action": "named",
+          "as": "kidB",
+          "kind": "query",
+          "name": "personal_bests",
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "named",
+          "as": "parent",
+          "kind": "query",
+          "name": "recent_runs",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "r1", "deck_key": "math:mul:only:7" }] }
+        }
+      ]
+    },
+    {
+      "name": "a recorded run cannot be changed or removed by the child who ran it, and the best moves on with a faster run",
+      "members": { "kid": "child" },
+      "steps": [
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["r1", "{{kid}}", "math:mul:only:7", "7 times table", 20, 5, 60000, "2026-01-05", "2026-01-05T17:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "UPDATE app_practice_decks__runs SET duration_ms = 1, missed_count = 0 WHERE id = 'r1'",
+          "expect": { "status": 403 }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "DELETE FROM app_practice_decks__runs WHERE id = 'r1'",
+          "expect": { "status": 403 }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["b1", "{{kid}}", "math:mul:only:7", 20, "7 times table", 60000, "2026-01-05", 1, "2026-01-05"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "UPDATE app_practice_decks__bests SET label = ?, best_ms = ?, best_date = ?, run_count = ?, last_date = ? WHERE id = ?",
+          "params": ["7 times table", 52000, "2026-01-06", 2, "2026-01-06", "b1"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "SELECT * FROM app_practice_decks__bests WHERE member_id = ? ORDER BY last_date DESC, deck_key LIMIT 300",
+          "params": ["{{kid}}"],
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "best_ms": 52000, "run_count": 2, "best_date": "2026-01-06" }] }
+        },
+        {
+          "action": "db",
+          "as": "kid",
+          "sql": "SELECT id, duration_ms FROM app_practice_decks__runs",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "r1", "duration_ms": 60000 }] }
+        }
+      ]
+    },
+    {
+      "name": "a child cannot plant a time under a sibling's name — the owner column is forced to the caller",
+      "members": { "kidA": "child", "kidB": "child" },
+      "steps": [
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["r_planted", "{{kidB}}", "math:mul:only:7", "7 times table", 20, 20, 999000, "2026-01-05", "2026-01-05T17:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "SELECT id FROM app_practice_decks__runs",
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "SELECT id FROM app_practice_decks__runs",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "r_planted" }] }
+        }
+      ]
+    },
+    {
+      "name": "a family deck is for everyone and edited by its author or an adult; a private deck is seen by its author and adults only",
+      "members": { "parent": "adult", "kidA": "child", "kidB": "child" },
+      "steps": [
+        {
+          "action": "db",
+          "as": "parent",
+          "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["d_family", "Spelling week 6", "spelling", "[{\"q\":\"\",\"a\":\"necessary\"}]", "everyone", "{{parent}}", "2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": ["d_private", "My Spanish", "cards", "[{\"q\":\"dog\",\"a\":\"el perro\"}]", "mine", "{{kidA}}", "2026-01-02T00:00:00Z", "2026-01-02T00:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "SELECT * FROM app_practice_decks__decks ORDER BY created_at DESC, id DESC LIMIT 100",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "d_family", "title": "Spelling week 6", "mode": "spelling" }] }
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?",
+          "params": ["Hacked", "cards", "[]", "everyone", "2026-01-03T00:00:00Z", "d_family"]
+        },
+        {
+          "action": "db",
+          "as": "kidB",
+          "sql": "DELETE FROM app_practice_decks__decks WHERE id = ?",
+          "params": ["d_private"]
+        },
+        {
+          "action": "db",
+          "as": "kidA",
+          "sql": "SELECT * FROM app_practice_decks__decks ORDER BY created_at DESC, id DESC LIMIT 100",
+          "expect": {
+            "status": 200,
+            "rowCount": 2,
+            "rowsContain": [{ "id": "d_family", "title": "Spelling week 6" }, { "id": "d_private", "title": "My Spanish" }]
+          }
+        },
+        {
+          "action": "db",
+          "as": "parent",
+          "sql": "UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?",
+          "params": ["My Spanish (checked)", "cards", "[{\"q\":\"dog\",\"a\":\"el perro\"}]", "mine", "2026-01-03T00:00:00Z", "d_private"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "named",
+          "as": "parent",
+          "kind": "query",
+          "name": "decks",
+          "expect": {
+            "status": 200,
+            "rowCount": 2,
+            "rowsContain": [{ "id": "d_private", "title": "My Spanish (checked)", "visibility": "mine" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "any member can announce their own finished run",
+      "members": { "kid": "child" },
+      "steps": [
+        {
+          "action": "publish",
+          "as": "kid",
+          "type": "practice-decks.run_completed",
+          "subject_id": "{{kid}}",
+          "payload": { "member_id": "{{kid}}", "deck_key": "math:mul:only:7", "cards": 20, "missed": 2, "duration_ms": 48300, "personal_best": true },
+          "expect": { "status": 201 }
+        }
+      ]
+    }
+  ]
+}
