@@ -1,0 +1,369 @@
+{
+ "seed": [
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-0 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-0 hours'))",
+   "params": [
+    "pdk-1",
+    "Spelling — week 6",
+    "spelling",
+    "[{\"q\": \"you need it\", \"a\": \"necessary\"}, {\"q\": \"a steady beat\", \"a\": \"rhythm\"}, {\"q\": \"\", \"a\": \"because\"}, {\"q\": \"\", \"a\": \"friend\"}, {\"q\": \"\", \"a\": \"different\"}, {\"q\": \"\", \"a\": \"beautiful\"}, {\"q\": \"not together\", \"a\": \"separate\"}, {\"q\": \"\", \"a\": \"definitely\"}, {\"q\": \"\", \"a\": \"calendar\"}, {\"q\": \"\", \"a\": \"February\"}]",
+    "everyone",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','-1 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','-1 hours'))",
+   "params": [
+    "pdk-2",
+    "Capital cities",
+    "cards",
+    "[{\"q\": \"France\", \"a\": \"Paris\"}, {\"q\": \"Japan\", \"a\": \"Tokyo\"}, {\"q\": \"Kenya\", \"a\": \"Nairobi\"}, {\"q\": \"Peru\", \"a\": \"Lima\"}, {\"q\": \"Canada\", \"a\": \"Ottawa\"}, {\"q\": \"Egypt\", \"a\": \"Cairo\"}, {\"q\": \"Australia\", \"a\": \"Canberra\"}, {\"q\": \"Brazil\", \"a\": \"Brasília|Brasilia\"}, {\"q\": \"India\", \"a\": \"New Delhi\"}, {\"q\": \"Norway\", \"a\": \"Oslo\"}, {\"q\": \"Thailand\", \"a\": \"Bangkok\"}, {\"q\": \"Argentina\", \"a\": \"Buenos Aires\"}]",
+    "everyone",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-2 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-2 hours'))",
+   "params": [
+    "pdk-3",
+    "Spanish — food words",
+    "cards",
+    "[{\"q\": \"apple\", \"a\": \"manzana\"}, {\"q\": \"bread\", \"a\": \"pan\"}, {\"q\": \"cheese\", \"a\": \"queso\"}, {\"q\": \"milk\", \"a\": \"leche\"}, {\"q\": \"water\", \"a\": \"agua\"}, {\"q\": \"chicken\", \"a\": \"pollo\"}, {\"q\": \"rice\", \"a\": \"arroz\"}, {\"q\": \"egg\", \"a\": \"huevo\"}, {\"q\": \"orange\", \"a\": \"naranja\"}, {\"q\": \"fish\", \"a\": \"pescado\"}]",
+    "everyone",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-3 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-3 hours'))",
+   "params": [
+    "pdk-4",
+    "Science — states of matter",
+    "cards",
+    "[{\"q\": \"Solid to liquid\", \"a\": \"melting\"}, {\"q\": \"Liquid to gas\", \"a\": \"evaporation\"}, {\"q\": \"Gas to liquid\", \"a\": \"condensation\"}, {\"q\": \"Liquid to solid\", \"a\": \"freezing\"}, {\"q\": \"Solid straight to gas\", \"a\": \"sublimation\"}, {\"q\": \"Water boils at (°C)\", \"a\": \"100\"}, {\"q\": \"Water freezes at (°C)\", \"a\": \"0\"}]",
+    "everyone",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-4 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-4 hours'))",
+   "params": [
+    "pdk-5",
+    "Periodic table — first 12",
+    "cards",
+    "[{\"q\": \"H\", \"a\": \"hydrogen\"}, {\"q\": \"He\", \"a\": \"helium\"}, {\"q\": \"Li\", \"a\": \"lithium\"}, {\"q\": \"Be\", \"a\": \"beryllium\"}, {\"q\": \"B\", \"a\": \"boron\"}, {\"q\": \"C\", \"a\": \"carbon\"}, {\"q\": \"N\", \"a\": \"nitrogen\"}, {\"q\": \"O\", \"a\": \"oxygen\"}, {\"q\": \"F\", \"a\": \"fluorine\"}, {\"q\": \"Ne\", \"a\": \"neon\"}, {\"q\": \"Na\", \"a\": \"sodium\"}, {\"q\": \"Mg\", \"a\": \"magnesium\"}]",
+    "everyone",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-5 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-5 hours'))",
+   "params": [
+    "pdk-6",
+    "Spelling — tricky doubles",
+    "spelling",
+    "[{\"q\": \"\", \"a\": \"accommodate\"}, {\"q\": \"\", \"a\": \"embarrass\"}, {\"q\": \"\", \"a\": \"occurrence\"}, {\"q\": \"\", \"a\": \"committee\"}, {\"q\": \"\", \"a\": \"millennium\"}, {\"q\": \"\", \"a\": \"possession\"}, {\"q\": \"\", \"a\": \"recommend\"}, {\"q\": \"\", \"a\": \"address\"}]",
+    "mine",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__decks (id, title, mode, cards, visibility, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-6 hours'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-6 hours'))",
+   "params": [
+    "pdk-7",
+    "Roman numerals",
+    "cards",
+    "[{\"q\": \"IV\", \"a\": \"4\"}, {\"q\": \"IX\", \"a\": \"9\"}, {\"q\": \"XL\", \"a\": \"40\"}, {\"q\": \"XC\", \"a\": \"90\"}, {\"q\": \"CD\", \"a\": \"400\"}, {\"q\": \"CM\", \"a\": \"900\"}, {\"q\": \"XIV\", \"a\": \"14\"}, {\"q\": \"MMXXVI\", \"a\": \"2026\"}]",
+    "mine",
+    "{{me}}"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 20, ?, 48300, date('now','-0 days'), 4, date('now','-0 days'))",
+   "params": [
+    "pdb-1",
+    "{{me}}",
+    "math:mul:only:7",
+    "7 times table"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 2, 48300, date('now','-0 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-0 days','-7 minutes'))",
+   "params": [
+    "pdr-1",
+    "{{me}}",
+    "math:mul:only:7",
+    "7 times table"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 3, 51900, date('now','-1 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-14 minutes'))",
+   "params": [
+    "pdr-2",
+    "{{me}}",
+    "math:mul:only:7",
+    "7 times table"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 4, 55900, date('now','-3 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-21 minutes'))",
+   "params": [
+    "pdr-3",
+    "{{me}}",
+    "math:mul:only:7",
+    "7 times table"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 5, 61200, date('now','-6 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-28 minutes'))",
+   "params": [
+    "pdr-4",
+    "{{me}}",
+    "math:mul:only:7",
+    "7 times table"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 40, ?, 118400, date('now','-0 days'), 3, date('now','-0 days'))",
+   "params": [
+    "pdb-2",
+    "{{me}}",
+    "math:mul:upto:12",
+    "Times tables up to 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 40, 4, 118400, date('now','-0 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-0 days','-35 minutes'))",
+   "params": [
+    "pdr-5",
+    "{{me}}",
+    "math:mul:upto:12",
+    "Times tables up to 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 40, 6, 126900, date('now','-2 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-42 minutes'))",
+   "params": [
+    "pdr-6",
+    "{{me}}",
+    "math:mul:upto:12",
+    "Times tables up to 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 40, 9, 141000, date('now','-8 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-49 minutes'))",
+   "params": [
+    "pdr-7",
+    "{{me}}",
+    "math:mul:upto:12",
+    "Times tables up to 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 20, ?, 57200, date('now','-1 days'), 2, date('now','-1 days'))",
+   "params": [
+    "pdb-3",
+    "{{me}}",
+    "math:div:only:8",
+    "Dividing by 8"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 2, 57200, date('now','-1 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-56 minutes'))",
+   "params": [
+    "pdr-8",
+    "{{me}}",
+    "math:div:only:8",
+    "Dividing by 8"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 5, 66100, date('now','-4 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-63 minutes'))",
+   "params": [
+    "pdr-9",
+    "{{me}}",
+    "math:div:only:8",
+    "Dividing by 8"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 20, ?, 31800, date('now','-2 days'), 2, date('now','-2 days'))",
+   "params": [
+    "pdb-4",
+    "{{me}}",
+    "math:add:upto:10",
+    "Adding up to 10"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 0, 31800, date('now','-2 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-70 minutes'))",
+   "params": [
+    "pdr-10",
+    "{{me}}",
+    "math:add:upto:10",
+    "Adding up to 10"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 20, 1, 35500, date('now','-9 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-77 minutes'))",
+   "params": [
+    "pdr-11",
+    "{{me}}",
+    "math:add:upto:10",
+    "Adding up to 10"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 10, ?, 22800, date('now','-5 days'), 2, date('now','-3 days'))",
+   "params": [
+    "pdb-5",
+    "{{me}}",
+    "math:sub:only:9",
+    "Taking away 9"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 1, 24100, date('now','-3 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-84 minutes'))",
+   "params": [
+    "pdr-12",
+    "{{me}}",
+    "math:sub:only:9",
+    "Taking away 9"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 0, 22800, date('now','-5 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-91 minutes'))",
+   "params": [
+    "pdr-13",
+    "{{me}}",
+    "math:sub:only:9",
+    "Taking away 9"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 10, ?, 71500, date('now','-0 days'), 3, date('now','-0 days'))",
+   "params": [
+    "pdb-6",
+    "{{me}}",
+    "deck:pdk-1",
+    "Spelling — week 6"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 2, 71500, date('now','-0 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-0 days','-98 minutes'))",
+   "params": [
+    "pdr-14",
+    "{{me}}",
+    "deck:pdk-1",
+    "Spelling — week 6"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 3, 83200, date('now','-1 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-105 minutes'))",
+   "params": [
+    "pdr-15",
+    "{{me}}",
+    "deck:pdk-1",
+    "Spelling — week 6"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 5, 96400, date('now','-4 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-112 minutes'))",
+   "params": [
+    "pdr-16",
+    "{{me}}",
+    "deck:pdk-1",
+    "Spelling — week 6"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 10, ?, 44900, date('now','-1 days'), 3, date('now','-1 days'))",
+   "params": [
+    "pdb-7",
+    "{{me}}",
+    "deck:pdk-2",
+    "Capital cities"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 1, 44900, date('now','-1 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-119 minutes'))",
+   "params": [
+    "pdr-17",
+    "{{me}}",
+    "deck:pdk-2",
+    "Capital cities"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 3, 58300, date('now','-7 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-126 minutes'))",
+   "params": [
+    "pdr-18",
+    "{{me}}",
+    "deck:pdk-2",
+    "Capital cities"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 4, 63000, date('now','-12 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-133 minutes'))",
+   "params": [
+    "pdr-19",
+    "{{me}}",
+    "deck:pdk-2",
+    "Capital cities"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 10, ?, 39700, date('now','-2 days'), 2, date('now','-2 days'))",
+   "params": [
+    "pdb-8",
+    "{{me}}",
+    "deck:pdk-3",
+    "Spanish — food words"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 1, 39700, date('now','-2 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-140 minutes'))",
+   "params": [
+    "pdr-20",
+    "{{me}}",
+    "deck:pdk-3",
+    "Spanish — food words"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 3, 52200, date('now','-10 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-147 minutes'))",
+   "params": [
+    "pdr-21",
+    "{{me}}",
+    "deck:pdk-3",
+    "Spanish — food words"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__bests (id, member_id, deck_key, card_count, label, best_ms, best_date, run_count, last_date) VALUES (?, ?, ?, 10, ?, 47600, date('now','-5 days'), 2, date('now','-5 days'))",
+   "params": [
+    "pdb-9",
+    "{{me}}",
+    "deck:pdk-5",
+    "Periodic table — first 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 2, 47600, date('now','-5 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-154 minutes'))",
+   "params": [
+    "pdr-22",
+    "{{me}}",
+    "deck:pdk-5",
+    "Periodic table — first 12"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_practice_decks__runs (id, member_id, deck_key, label, card_count, missed_count, duration_ms, run_date, created_at) VALUES (?, ?, ?, ?, 10, 4, 61900, date('now','-14 days'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-161 minutes'))",
+   "params": [
+    "pdr-23",
+    "{{me}}",
+    "deck:pdk-5",
+    "Periodic table — first 12"
+   ]
+  }
+ ]
+}
