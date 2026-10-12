@@ -471,7 +471,8 @@ async function finishRun() {
       await loadData();
       saved = await persistRun(row);
     } catch (e) {
-      error = `This run could not be saved: ${e.message}`;
+      console.error(e);
+      error = "Couldn’t save this run.";
       if (result?.row === row) render();
       return;
     }
@@ -520,7 +521,7 @@ async function saveDeck(form) {
       const res = await db("UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?", [title, mode, json, visibility, stamp, id]);
       // The hub answers 200 with nothing changed when the deck is not this
       // member's to edit, or is gone.
-      if (res.changed === 0) throw new Error("This deck can no longer be changed.");
+      if (res.changed === 0) throw Object.assign(new Error("This deck can no longer be changed."), { forUser: true });
       const next = { ...existing, title, mode, cards: json, visibility, updated_at: stamp };
       decks = decks.map(d => (d.id === id ? next : d));
       if (DEMO) demoStore.decks = decks;
@@ -539,7 +540,8 @@ async function saveDeck(form) {
   } catch (e) {
     if (button) { button.disabled = false; button.textContent = "Save"; }
     const note = form.querySelector("[data-form-error]");
-    if (note) { note.textContent = e.message; note.style.display = ""; }
+    console.error(e);
+    if (note) { note.textContent = e?.forUser ? e.message : "Couldn’t save the deck — try again."; note.style.display = ""; }
   }
 }
 
@@ -564,7 +566,8 @@ async function deleteDeck(id) {
     error = "";
     closeModal();
   } catch (e) {
-    error = e.message;
+    console.error(e);
+    error = "Couldn’t delete the deck — try again.";
   }
   render();
 }
