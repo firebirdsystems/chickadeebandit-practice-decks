@@ -42,6 +42,8 @@
     .stack { display: grid; gap: 10px; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
     .error { background: var(--red-soft); color: var(--red); padding: 9px 12px; border-radius: 8px; margin-bottom: 10px; font-size: .88rem; }
+    .load-error { margin: 0 0 12px; padding: 10px 14px; border-radius: 10px; background: var(--hub-tint-danger, #fee2e2); color: var(--hub-tint-danger-fg, #b91c1c); font-size: 0.9rem; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+    .load-error-retry { background: none; border: 1px solid currentColor; border-radius: 8px; padding: 5px 10px; font: inherit; font-weight: 600; color: inherit; cursor: pointer; flex-shrink: 0; }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -202,6 +204,7 @@ let run = null;           // the run in progress
 let result = null;        // the run just finished
 let searchQ = "";
 let error = "";
+let loadFailed = false;   // first load failed; cleared when a load succeeds
 let modalEl = null;
 let ready = false;
 let peekTimer = 0;
@@ -224,10 +227,10 @@ async function loadMembers() {
       { id: "demo-leo", name: "Leo", role: "child" },
     ];
   } else {
-    try {
-      const res = await fetch(`${CONTEXT}?keys=family.members`);
-      members = ((await res.json())["family.members"]) ?? [];
-    } catch { members = []; }
+    const res = await fetch(`${CONTEXT}?keys=family.members`);
+    const ctx = await res.json().catch(() => null);
+    if (!res.ok || !ctx || typeof ctx !== "object" || ctx.$errors?.length) throw new Error("Couldn’t reach the hub. Try again.");
+    members = ctx["family.members"] ?? [];
   }
   memberMap = new Map(members.map(m => [m.id, m]));
   if (!HUB_MEMBER && !demoMe) demoMe = members.find(m => !isAdult(m)) ?? members[0] ?? null;
@@ -295,8 +298,9 @@ async function refresh() {
     const last = runs.map(r => parseMathKey(r.deck_key)).find(Boolean);
     if (last) pick = last;
     error = "";
-  } catch (e) {
-    error = e.message;
+    loadFailed = false;
+  } catch {
+    loadFailed = true;
   }
   ready = true;
   render();
@@ -513,7 +517,10 @@ async function saveDeck(form) {
   const json = JSON.stringify(cards);
   try {
     if (existing) {
-      await db("UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?", [title, mode, json, visibility, stamp, id]);
+      const res = await db("UPDATE app_practice_decks__decks SET title = ?, mode = ?, cards = ?, visibility = ?, updated_at = ? WHERE id = ?", [title, mode, json, visibility, stamp, id]);
+      // The hub answers 200 with nothing changed when the deck is not this
+      // member's to edit, or is gone.
+      if (res.changed === 0) throw new Error("This deck can no longer be changed.");
       const next = { ...existing, title, mode, cards: json, visibility, updated_at: stamp };
       decks = decks.map(d => (d.id === id ? next : d));
       if (DEMO) demoStore.decks = decks;
@@ -542,7 +549,16 @@ async function deleteDeck(id) {
   const ok = await hubConfirm({ message: `Delete "${deck.title}"?`, description: "Best times already set with it are kept.", confirmLabel: "Delete", destructive: true });
   if (!ok) return;
   try {
-    await db("DELETE FROM app_practice_decks__decks WHERE id = ?", [id]);
+    const res = await db("DELETE FROM app_practice_decks__decks WHERE id = ?", [id]);
+    if (res.changed === 0) {
+      // Nothing was deleted: re-read to see whether it is already gone or was
+      // not this member's to delete.
+      await loadData();
+      error = decks.some(d => d.id === id) ? "This deck could not be deleted." : "";
+      closeModal();
+      render();
+      return;
+    }
     decks = decks.filter(d => d.id !== id);
     if (DEMO) demoStore.decks = decks;
     error = "";
@@ -647,6 +663,7 @@ function renderFamily() {
       <button type="button" class="tab on" data-action="screen" data-id="family">Family</button>
     </div>`;
   if (!family) return `${tabs}<div class="loading">Loading…</div>`;
+  if (family.failed) return `${tabs}<div class="card empty">Couldn’t load the family’s runs. <button type="button" class="btn-link" data-action="screen" data-id="family">Try again</button></div>`;
   const t = today();
   const byMember = members.map(m => ({ member: m, rows: family.bests.filter(b => b.member_id === m.id) })).filter(x => x.rows.length);
   if (!byMember.length) return `${tabs}<div class="card empty">Nobody has finished a run yet.</div>`;
@@ -711,7 +728,9 @@ function render() {
   const root = document.getElementById("root");
   if (!ready) return;
   const who = me();
-  const body = !who ? `<div class="card empty">Sign in to practise.</div>`
+  // Nothing was read: no decks, bests or runs to draw, and none to write over.
+  const body = loadFailed ? `<div class="load-error" data-testid="load-error" role="alert"><span>Couldn’t load your decks.</span> <button type="button" class="load-error-retry" data-testid="load-retry" data-action="load-retry">Try again</button></div>`
+    : !who ? `<div class="card empty">Sign in to practise.</div>`
     : screen === "run" && run ? renderRun()
     : screen === "done" && result ? renderDone()
     : screen === "family" && canSeeFamily(who) ? renderFamily()
@@ -810,8 +829,9 @@ function syncDeckForm() {
 async function go(next) {
   screen = next;
   render();
-  if (next === "family" && !family) {
-    try { await loadFamily(); error = ""; } catch (e) { error = e.message; family = { bests: [], runs: [] }; }
+  if (next === "family" && (!family || family.failed)) {
+    // A failed read is drawn as a note with its own retry, never as "nobody has finished a run".
+    try { await loadFamily(); error = ""; } catch { error = ""; family = { bests: [], runs: [], failed: true }; }
     if (screen === "family") render();
   }
 }
@@ -825,6 +845,7 @@ document.addEventListener("click", (event) => {
       demoMe = memberMap.get(id) ?? null; family = null; screen = "home"; searchQ = "";
       demoData(); render(); break;
     case "screen": go(id === "family" ? "family" : "home"); break;
+    case "load-retry": refresh(); break;
     case "op": {
       const max = OPS[id]?.max;
       if (max) { pick = { ...pick, op: id, n: Math.min(pick.n, max) }; render(); }
