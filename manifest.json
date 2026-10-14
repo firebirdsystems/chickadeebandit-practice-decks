@@ -49,14 +49,16 @@
       "kind": "owner_only",
       "member_column": "member_id",
       "adults_bypass": true,
-      "member_can_update": false,
-      "retain_days": { "default": 400, "timestamp_column": "created_at" }
+      "member_can_update": false
     },
     "bests": {
       "kind": "owner_only",
       "member_column": "member_id",
       "adults_bypass": true
     }
+  },
+  "retention": {
+    "runs": { "default": 400, "timestamp_column": "created_at" }
   },
   "glance": {
     "source": {
@@ -77,8 +79,5 @@
   },
   "publishes": ["practice-decks.run_completed"],
   "nav": { "label": "Decks" },
-  "resource_limits": {
-    "max_db_bytes": 52428800
-  },
   "icon": "⚡"
 }
