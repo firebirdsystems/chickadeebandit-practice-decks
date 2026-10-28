@@ -4,7 +4,7 @@
 -- deck is one write. mode is 'cards' (a prompt and a typed answer) or
 -- 'spelling' (the word is read aloud). visibility is 'everyone' or 'mine'.
 CREATE TABLE IF NOT EXISTS app_practice_decks__decks (
-  id         TEXT PRIMARY KEY,
+  id         TEXT NOT NULL PRIMARY KEY,
   title      TEXT NOT NULL,
   mode       TEXT NOT NULL,
   cards      TEXT NOT NULL,
@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS app_practice_decks__decks_created_idx
 -- runs and cannot change them afterwards (see `runs` in manifest.json).
 -- missed_count is the number of cards not answered right first time.
 CREATE TABLE IF NOT EXISTS app_practice_decks__runs (
-  id           TEXT PRIMARY KEY,
+  id           TEXT NOT NULL PRIMARY KEY,
   member_id    TEXT NOT NULL,
   deck_key     TEXT NOT NULL,
   label        TEXT NOT NULL DEFAULT '',
@@ -50,7 +50,7 @@ CREATE INDEX IF NOT EXISTS app_practice_decks__runs_created_idx
 -- first screen reads one row per set instead of every run ever finished, and
 -- so a best survives after the run that set it has expired.
 CREATE TABLE IF NOT EXISTS app_practice_decks__bests (
-  id         TEXT PRIMARY KEY,
+  id         TEXT NOT NULL PRIMARY KEY,
   member_id  TEXT NOT NULL,
   deck_key   TEXT NOT NULL,
   card_count INTEGER NOT NULL,
